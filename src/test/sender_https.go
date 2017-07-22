@@ -2,6 +2,7 @@ package test
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -9,12 +10,7 @@ import (
 	"time"
 )
 
-type Result struct {
-	RequestNum   uint
-	ResponseTime time.Duration
-}
-
-func sendRequest(destUrl string, payload []byte, reqNo uint, client *http.Client, results []Result) {
+func sendHTTPSRequest(destUrl string, payload []byte, reqNo uint, client *http.Client, results []Result) {
 	var req *http.Request
 	var err error
 	if payload != nil {
@@ -42,13 +38,19 @@ func sendRequest(destUrl string, payload []byte, reqNo uint, client *http.Client
 	fmt.Printf("Transaction %d, Elapsed time - %s\n", reqNo, elapsed)
 }
 
-func prepareRequest(numOfTransactions, payloadSize uint) (*http.Client, []byte, []Result, error) {
+func prepareHTTPSRequest(numOfTransactions, payloadSize uint) (*http.Client, []byte, []Result, error) {
 	var err error
 	var payload []byte
+
+	// Setup HTTPS client
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+	}
 
 	client := &http.Client{
 		Transport: &http.Transport{
 			MaxIdleConnsPerHost: 100,
+			TLSClientConfig:     tlsConfig,
 		},
 	}
 
