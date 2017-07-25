@@ -35,12 +35,6 @@ func wss_receiver(c *websocket.Conn, respTime chan<- time.Duration, quit <-chan 
 	}
 }
 
-func wss_sender(c *websocket.Conn, payload []byte, noOfTrans uint, done chan struct{}, result chan Result) {
-	defer c.Close()
-	defer close(done)
-
-}
-
 func setUp(noOfTrans, payloadSize uint, destUrl string) (*websocket.Conn, []byte, error) {
 	// Setup HTTPS client
 	tlsConfig := &tls.Config{
